@@ -1,0 +1,1910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduPath - AI Learning Platform</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.8s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .course-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            transition: transform 0.3s ease;
+        }
+        
+        .course-card:hover .course-image {
+            transform: scale(1.05);
+        }
+        
+        .profile-image-preview {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid transparent;
+            background: linear-gradient(45deg, #7c3aed, #db2777) border-box;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .profile-image-preview:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        }
+        
+        .login-card {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        
+        #preLogin {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+                        url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        
+        #home {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+                        url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        
+        .btn {
+            transition: all 0.3s ease;
+            transform: perspective(1px) translateZ(0);
+        }
+        
+        .btn:hover {
+            transform: perspective(1px) translateZ(0) scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+        }
+        
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #7c3aed;
+            border-radius: 4px;
+        }
+        
+        .hero-image {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+            border-radius: 16px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            margin: 0 auto;
+        }
+        
+        .certificate-modal {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            max-width: 900px;
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .certificate-template {
+            background: #ffffff;
+            border: 15px solid #1e3a8a;
+            border-image: linear-gradient(45deg, #1e3a8a, #7c3aed, #db2777) 1;
+            padding: 40px;
+            position: relative;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            background-image: url('https://images.unsplash.com/photo-1596462502278-27bfdc403348?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        
+        .certificate-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        
+        .certificate-border {
+            border: 2px solid #1e3a8a;
+            padding: 30px;
+            position: relative;
+            background: #ffffff;
+        }
+        
+        .certificate-title {
+            font-family: 'Playfair Display', serif;
+            color: #1e3a8a;
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .certificate-subtitle {
+            font-family: 'Inter', sans-serif;
+            color: #7c3aed;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+        
+        .certificate-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            color: #1e293b;
+            margin: 20px 0;
+            padding: 15px 0;
+            border-top: 2px dashed #7c3aed;
+            border-bottom: 2px dashed #7c3aed;
+        }
+        
+        .certificate-course {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.6rem;
+            color: #db2777;
+            margin: 15px 0;
+        }
+        
+        .certificate-date {
+            font-family: 'Inter', sans-serif;
+            color: #64748b;
+            font-size: 1rem;
+        }
+        
+        .certificate-id {
+            font-family: 'Courier New', monospace;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-top: 15px;
+        }
+        
+        .watermark {
+            position: absolute;
+            opacity: 0.15;
+            font-size: 6rem;
+            color: #7c3aed;
+            transform: rotate(-30deg);
+            top: 25%;
+            left: 5%;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .certificate-seal {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 80px;
+            height: 80px;
+            background: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80') no-repeat center;
+            background-size: cover;
+            opacity: 0.6;
+        }
+        
+        .quiz-progress {
+            height: 6px;
+            background: #e5e7eb;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .quiz-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #7c3aed, #db2777);
+            transition: width 0.3s ease;
+        }
+        
+        .courses-bg {
+            background: linear-gradient(135deg, #1e3a8a, #7c3aed, #db2777);
+            background-size: 200% 200%;
+            animation: gradientShift 12s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* New styles for enhanced certificate template */
+        .certificate-ribbon {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 40px;
+            background: linear-gradient(45deg, #7c3aed, #db2777);
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+        }
+        
+        .certificate-ornament {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #7c3aed, #db2777);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .certificate-ornament.right {
+            left: auto;
+            right: 20px;
+        }
+        
+        .certificate-signature {
+            margin-top: 30px;
+            border-top: 1px solid #7c3aed;
+            padding-top: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .signature-box {
+            text-align: center;
+            width: 45%;
+        }
+        
+        .signature-line {
+            border-top: 1px solid #1e3a8a;
+            margin-top: 40px;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .signature-name {
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        .signature-title {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+        
+        /* About page enhancements */
+        .about-feature-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .about-feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #7c3aed, #db2777);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .header .flex {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .header .flex > div:first-child {
+                margin-bottom: 10px;
+            }
+            
+            .header .flex > div:last-child {
+                margin-top: 10px;
+            }
+            
+            .nav-link {
+                font-size: 0.9rem;
+                padding: 5px;
+            }
+            
+            .hero-image {
+                max-width: 100%;
+            }
+            
+            .grid-cols-1 {
+                grid-template-columns: 1fr;
+            }
+            
+            .grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+            
+            .grid-cols-3 {
+                grid-template-columns: 1fr;
+            }
+            
+            .grid-cols-4 {
+                grid-template-columns: 1fr;
+            }
+            
+            .certificate-template {
+                padding: 20px;
+            }
+            
+            .certificate-title {
+                font-size: 1.8rem;
+            }
+            
+            .certificate-name {
+                font-size: 1.6rem;
+            }
+            
+            .certificate-course {
+                font-size: 1.2rem;
+            }
+            
+            .certificate-signature {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .signature-box {
+                width: 100%;
+            }
+        }
+        
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .grid-cols-3 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .grid-cols-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800">
+    <!-- Pre-Login Page -->
+    <section id="preLogin" class="page active flex items-center justify-center min-h-screen">
+        <div class="container max-w-md mx-auto px-4">
+            <div class="login-card rounded-2xl shadow-2xl p-8 text-white fade-in">
+                <h1 class="text-4xl font-bold text-center mb-6 tracking-tight">Welcome to EduPath</h1>
+                <p class="text-center text-lg mb-8 opacity-90">Embark on a vibrant learning journey!</p>
+               
+                <!-- Login/Signup Form -->
+                <div class="flex flex-col gap-6">
+                    <div>
+                        <label for="loginName" class="block text-sm font-semibold">Name</label>
+                        <input type="text" id="loginName" class="w-full p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 border border-white/30 focus:outline-none focus:ring-2 focus:ring-indigo-400" placeholder="Enter your name" required>
+                    </div>
+                    <div>
+                        <label for="loginAge" class="block text-sm font-semibold">Age</label>
+                        <input type="number" id="loginAge" class="w-full p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 border border-white/30 focus:outline-none focus:ring-2 focus:ring-indigo-400" placeholder="Enter your age" required>
+                    </div>
+                    <div>
+                        <label for="loginRole" class="block text-sm font-semibold">Role</label>
+                        <select id="loginRole" class="w-full p-3 rounded-lg bg-white/20 text-white border border-white/30 focus:outline-none focus:ring-2 focus:ring-indigo-400" required>
+                            <option value="" class="text-gray-300">Select Role</option>
+                            <option value="student">Student</option>
+                            <option value="teacher">Teacher</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="profileImage" class="block text-sm font-semibold">Profile Image (Optional)</label>
+                        <input type="file" id="profileImage" accept="image/*" class="w-full p-3 rounded-lg bg-white/20 text-white border border-white/30 focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                        <div id="imagePreview" class="mt-4 flex justify-center"></div>
+                    </div>
+                    <div class="flex justify-center gap-4">
+                        <button class="btn bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700" id="loginBtn">Login</button>
+                        <button class="btn bg-white/20 text-white px-6 py-3 rounded-lg hover:bg-white/30" id="signupBtn">Sign Up</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Signup Modal -->
+    <div id="signupModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white p-6 rounded-lg max-w-md w-full card">
+            <h2 class="text-2xl font-bold mb-4 text-indigo-600">Sign Up</h2>
+            <div class="flex flex-col gap-4">
+                <div>
+                    <label for="userName" class="block text-sm font-semibold">Name</label>
+                    <input type="text" id="userName" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400" required>
+                </div>
+                <div>
+                    <label for="userAge" class="block text-sm font-semibold">Age</label>
+                    <input type="number" id="userAge" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400" required>
+                </div>
+                <div>
+                    <label for="userRole" class="block text-sm font-semibold">Role</label>
+                    <select id="userRole" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400" required>
+                        <option value="">Select Role</option>
+                        <option value="student">Student</option>
+                        <option value="teacher">Teacher</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="preferredCourse" class="block text-sm font-semibold">Preferred Course</label>
+                    <select id="preferredCourse" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400" required>
+                        <option value="">Select Course</option>
+                        <option value="1">Data Structures</option>
+                        <option value="2">Java Programming</option>
+                        <option value="3">Prompt Engineering</option>
+                        <option value="4">Full Stack Development</option>
+                        <option value="5">Python Programming</option>
+                        <option value="6">C++ Programming</option>
+                    </select>
+                </div>
+                <div class="flex gap-4">
+                    <button type="button" class="btn bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700" id="submitSignupBtn">Submit</button>
+                    <button type="button" class="btn bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300" id="cancelSignupBtn">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Certificate Modal -->
+    <div id="certificateModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="certificate-modal p-6 card">
+            <h2 class="text-2xl font-bold text-indigo-600 mb-4">Certificate of Completion</h2>
+            <div id="certificateContent" class="certificate-template">
+                <div class="certificate-overlay"></div>
+                <div class="certificate-ribbon">Certificate of Achievement</div>
+                <div class="certificate-ornament">🎓</div>
+                <div class="certificate-ornament right">🏆</div>
+                <div class="certificate-border">
+                    <div class="watermark">EDUPATH</div>
+                    <div class="certificate-seal"></div>
+                   
+                    <div class="text-center mb-6">
+                        <div class="certificate-title">Certificate of Achievement</div>
+                        <div class="certificate-subtitle">Awarded for Outstanding Performance</div>
+                    </div>
+                    <div class="certificate-name text-center" id="certificateName">Student Name</div>
+                    <div class="text-center my-6">
+                        <div class="text-gray-600 text-lg mb-3">has successfully completed the course</div>
+                        <div class="certificate-course" id="certificateCourse">Course Name</div>
+                        <div class="text-gray-500 mt-2">demonstrating excellence in learning</div>
+                    </div>
+                    
+                    <div class="certificate-signature">
+                        <div class="signature-box">
+                            <div class="signature-line"></div>
+                            <div class="signature-name" id="instructorName">Dr. Sarah Johnson</div>
+                            <div class="signature-title">Course Instructor</div>
+                        </div>
+                        <div class="signature-box">
+                            <div class="signature-line"></div>
+                            <div class="signature-name">Michael Chen</div>
+                            <div class="signature-title">Head of Education</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center mt-10">
+                        <div class="text-center">
+                            <div class="border-t-2 border-gray-400 pt-2 w-32 mx-auto">
+                                <div class="font-semibold text-gray-700">Date</div>
+                                <div class="certificate-date" id="certificateDate">January 1, 2025</div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="border-t-2 border-gray-400 pt-2 w-32 mx-auto">
+                                <div class="font-semibold text-gray-700">Director</div>
+                                <div class="text-gray-600">EduPath Academy</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-6">
+                        <div class="certificate-id">Certificate ID: <span id="certificateId">EDP-2025-12345</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-center gap-4 mt-6">
+                <button id="downloadCertificateBtn" class="btn bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 flex items-center gap-2">
+                    <span>Download as PDF</span>
+                </button>
+                <button id="closeCertificateBtn" class="btn bg-gray-200 text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-300">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header shadow-lg sticky top-0 z-50 hidden" id="mainHeader">
+        <div class="container max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <span class="text-2xl font-bold text-indigo-600">📚 EduPath</span>
+                </div>
+                <div class="flex gap-6">
+                    <a href="#" class="nav-link text-gray-600 hover:text-indigo-600 font-semibold" data-page="home">Home</a>
+                    <a href="#" class="nav-link text-gray-600 hover:text-indigo-600 font-semibold" data-page="courses">Courses</a>
+                    <a href="#" class="nav-link text-gray-600 hover:text-indigo-600 font-semibold" data-page="dashboard">Dashboard</a>
+                    <a href="#" class="nav-link text-gray-600 hover:text-indigo-600 font-semibold" data-page="aiAssistant">AI Assistant</a>
+                    <a href="#" class="nav-link text-gray-600 hover:text-indigo-600 font-semibold" data-page="about">About</a>
+                </div>
+                <div class="flex gap-4 items-center">
+                    <img id="headerProfileImage" class="w-10 h-10 rounded-full object-cover hidden" alt="Profile">
+                    <button class="btn bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300" id="logoutBtn">Logout</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Home Page -->
+    <section id="home" class="page hidden fade-in">
+        <div class="container max-w-6xl mx-auto px-4 py-16 text-center text-white">
+            <h1 class="text-4xl md:text-5xl font-bold mb-6 text-shadow-lg tracking-tight">AI-Powered Learning Platform</h1>
+            <p class="text-lg md:text-xl mb-8 max-w-2xl mx-auto opacity-90">Personalized education with interactive courses, AI assistance, and progress tracking.</p>
+            <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                 alt="Learning Hero"
+                 class="hero-image mb-8"
+                 onerror="this.src='https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';">
+            <button class="btn bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700" id="startLearningBtn">Start Learning Now</button>
+        </div>
+    </section>
+
+    <!-- Courses Page -->
+    <section id="courses" class="page hidden courses-bg fade-in">
+        <div class="container max-w-6xl mx-auto px-4 py-8">
+            <h2 class="text-3xl font-bold text-center text-white mb-12">Available Courses</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Course cards remain the same -->
+                <!-- Data Structures -->
+                <div class="course-card bg-white rounded-lg shadow-lg overflow-hidden card">
+                    <img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                         alt="Data Structures"
+                         class="course-image"
+                         onerror="this.src='https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80';">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-indigo-600 mb-2">Data Structures</h3>
+                        <div class="flex justify-between text-gray-600 text-sm mb-4">
+                            <span>4 Lessons</span>
+                            <span>4.8 ★</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">Learn about various data structures and their implementations.</p>
+                        <button class="btn bg-indigo-600 text-white px-4 py-2 rounded w-full hover:bg-indigo-700 enroll-btn" data-course="1">Enroll Now</button>
+                    </div>
+                </div>
+                <!-- Java Programming -->
+                <div class="course-card bg-white rounded-lg shadow-lg overflow-hidden card">
+                    <img src="https://images.unsplash.com/photo-1547658719-da2b51169166?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                         alt="Java Programming"
+                         class="course-image"
+                         onerror="this.src='https://images.unsplash.com/photo-1547658719-da2b51169166?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80';">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-indigo-600 mb-2">Java Programming</h3>
+                        <div class="flex justify-between text-gray-600 text-sm mb-4">
+                            <span>4 Lessons</span>
+                            <span>4.7 ★</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">Master Java from basics to advanced concepts.</p>
+                        <button class="btn bg-indigo-600 text-white px-4 py-2 rounded w-full hover:bg-indigo-700 enroll-btn" data-course="2">Enroll Now</button>
+                    </div>
+                </div>
+                <!-- Prompt Engineering -->
+                <div class="course-card bg-white rounded-lg shadow-lg overflow-hidden card">
+                    <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                         alt="Prompt Engineering"
+                         class="course-image"
+                         onerror="this.src='https://images.unsplash.com/photo-1677442136019-21780ecad995?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80';">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-indigo-600 mb-2">Prompt Engineering</h3>
+                        <div class="flex justify-between text-gray-600 text-sm mb-4">
+                            <span>1 Lesson</span>
+                            <span>4.9 ★</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">Learn how to craft effective prompts for AI models.</p>
+                        <button class="btn bg-indigo-600 text-white px-4 py-2 rounded w-full hover:bg-indigo-700 enroll-btn" data-course="3">Enroll Now</button>
+                    </div>
+                </div>
+                <!-- Full Stack Development -->
+                <div class="course-card bg-white rounded-lg shadow-lg overflow-hidden card">
+                    <img src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                         alt="Full Stack Development"
+                         class="course-image"
+                         onerror="this.src='https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80';">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-indigo-600 mb-2">Full Stack Development</h3>
+                        <div class="flex justify-between text-gray-600 text-sm mb-4">
+                            <span>4 Lessons</span>
+                            <span>4.8 ★</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">Build complete web applications from front to back.</p>
+                        <button class="btn bg-indigo-600 text-white px-4 py-2 rounded w-full hover:bg-indigo-700 enroll-btn" data-course="4">Enroll Now</button>
+                    </div>
+                </div>
+                <!-- Python Programming -->
+                <div class="course-card bg-white rounded-lg shadow-lg overflow-hidden card">
+                    <img src="https://images.unsplash.com/photo-1526379879527-8559ecfcaec0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                         alt="Python Programming"
+                         class="course-image"
+                         onerror="this.src='https://images.unsplash.com/photo-1526379879527-8559ecfcaec0?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80';">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-indigo-600 mb-2">Python Programming</h3>
+                        <div class="flex justify-between text-gray-600 text-sm mb-4">
+                            <span>3 Lessons</span>
+                            <span>4.9 ★</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">Learn Python from beginner to advanced levels.</p>
+                        <button class="btn bg-indigo-600 text-white px-4 py-2 rounded w-full hover:bg-indigo-700 enroll-btn" data-course="5">Enroll Now</button>
+                    </div>
+                </div>
+                <!-- C++ Programming -->
+                <div class="course-card bg-white rounded-lg shadow-lg overflow-hidden card">
+                    <img src="https://images.unsplash.com/photo-1610563166150-b34df4f3bcd6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                         alt="C++ Programming"
+                         class="course-image"
+                         onerror="this.src='https://images.unsplash.com/photo-1610563166150-b34df4f3bcd6?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80';">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-indigo-600 mb-2">C++ Programming</h3>
+                        <div class="flex justify-between text-gray-600 text-sm mb-4">
+                            <span>3 Lessons</span>
+                            <span>4.7 ★</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">Master C++ for system and application development.</p>
+                        <button class="btn bg-indigo-600 text-white px-4 py-2 rounded w-full hover:bg-indigo-700 enroll-btn" data-course="6">Enroll Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Page -->
+    <section id="dashboard" class="page hidden courses-bg fade-in">
+        <div class="container max-w-6xl mx-auto px-4 py-8">
+            <div class="bg-white p-6 rounded-lg shadow-lg mb-8 card">
+                <h2 class="text-2xl font-bold text-indigo-600 mb-4">Welcome back, <span id="studentName">User</span>!</h2>
+                <p class="text-gray-600">Continue your learning journey with personalized recommendations.</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+                    <div class="bg-white p-4 rounded-lg shadow text-center card">
+                        <span class="text-3xl">📊</span>
+                        <h3 id="progressPercent" class="text-2xl font-semibold text-indigo-600 mt-2">75%</h3>
+                        <p class="text-gray-600">Overall Progress</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow text-center card">
+                        <span class="text-3xl">📚</span>
+                        <h3 id="courseCount" class="text-2xl font-semibold text-indigo-600 mt-2">3</h3>
+                        <p class="text-gray-600">Enrolled Courses</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow text-center card">
+                        <span class="text-3xl">✅</span>
+                        <h3 id="completedLessons" class="text-2xl font-semibold text-indigo-600 mt-2">12</h3>
+                        <p class="text-gray-600">Completed Lessons</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow text-center card">
+                        <span class="text-3xl">🏆</span>
+                        <h3 id="averageScore" class="text-2xl font-semibold text-indigo-600 mt-2">85%</h3>
+                        <p class="text-gray-600">Average Quiz Score</p>
+                    </div>
+                </div>
+            </div>
+            <h2 class="text-3xl font-bold text-center text-white mb-8">Your Courses</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="enrolledCourses">
+                <!-- Enrolled courses will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Assistant Page -->
+    <section id="aiAssistant" class="page hidden courses-bg fade-in">
+        <div class="container max-w-6xl mx-auto px-4 py-8">
+            <div class="bg-white p-6 rounded-lg shadow-lg card">
+                <h2 class="text-2xl font-bold text-indigo-600 mb-4">AI Learning Assistant</h2>
+                <p class="text-gray-600 mb-4">Ask me anything about your courses, progress, or quiz answers!</p>
+                <div class="border rounded-lg overflow-hidden">
+                    <div class="chat-messages max-h-96 overflow-y-auto p-4 bg-gray-100" id="chatMessages">
+                        <div class="message bg-indigo-600 text-white p-3 rounded-lg max-w-[80%]">Hello! I'm your AI learning assistant. How can I help you today?</div>
+                    </div>
+                    <div class="flex p-4 bg-white border-t">
+                        <input type="text" id="userInput" class="flex-1 p-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-indigo-400" placeholder="Ask about your courses, progress, or quiz answers...">
+                        <button id="sendMessageBtn" class="btn bg-indigo-600 text-white px-4 rounded-r-lg hover:bg-indigo-700">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Course Page -->
+    <section id="course" class="page hidden courses-bg fade-in">
+        <div class="container max-w-6xl mx-auto px-4 py-8">
+            <div class="bg-white p-6 rounded-lg shadow-lg mb-8 card">
+                <h2 id="courseTitle" class="text-2xl font-bold text-indigo-600 mb-2">Course Title</h2>
+                <p id="courseDescription" class="text-gray-600">Course description will appear here.</p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-6">
+                <div class="bg-white p-6 rounded-lg shadow-lg card">
+                    <h3 class="text-xl font-semibold text-indigo-600 mb-4">Course Content</h3>
+                    <div id="lessonList"></div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg card">
+                    <div id="lessonDisplay">
+                        <h3 class="text-xl font-semibold text-indigo-600">Select a lesson to begin</h3>
+                        <p class="text-gray-600">Choose a lesson from the sidebar to start learning.</p>
+                    </div>
+                    <div class="mt-6 border-t pt-6 hidden" id="quizSection">
+                        <h3 class="text-xl font-semibold text-indigo-600 mb-4">Lesson Quiz</h3>
+                        <div id="quizContent"></div>
+                        <button class="btn bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700" id="startQuizBtn">Start Quiz</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quiz Page -->
+    <section id="quiz" class="page hidden courses-bg fade-in">
+        <div class="container max-w-3xl mx-auto px-4 py-8">
+            <div class="bg-white p-6 rounded-lg shadow-lg card">
+                <h2 id="quizTitle" class="text-2xl font-bold text-indigo-600 mb-4">Lesson Quiz</h2>
+               
+                <!-- Quiz Progress -->
+                <div class="quiz-progress mb-6">
+                    <div class="quiz-progress-fill" id="quizProgressFill" style="width: 0%"></div>
+                </div>
+                <div class="flex justify-between text-sm text-gray-600 mb-6">
+                    <span>Question <span id="currentQuestionNumber">1</span> of <span id="totalQuestions">3</span></span>
+                    <span id="quizScoreDisplay">Score: 0%</span>
+                </div>
+               
+                <div id="quizContainer">
+                    <div class="question">
+                        <h3 id="questionText" class="text-lg font-semibold text-gray-800 mb-4">Question will appear here</h3>
+                    </div>
+                    <div class="options flex flex-col gap-4" id="optionsContainer"></div>
+                    <div class="flex justify-between mt-6">
+                        <button class="btn bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300" id="prevQuestionBtn">Previous</button>
+                        <button class="btn bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700" id="nextQuestionBtn">Next</button>
+                    </div>
+                </div>
+                <div id="quizResult" class="hidden text-center">
+                    <h3 class="text-2xl font-bold text-indigo-600 mb-4">Quiz Completed!</h3>
+                    <div class="score text-4xl font-semibold text-indigo-600 mb-4" id="quizScore">0/0</div>
+                    <p id="quizFeedback" class="text-gray-600 mb-4">Feedback will appear here</p>
+                    <div class="flex justify-center gap-4">
+                        <button class="btn bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700" id="backToCourseBtn">Back to Course</button>
+                        <button class="btn bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700" id="retryQuizBtn">Retry Quiz</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Page -->
+    <section id="about" class="page hidden courses-bg fade-in">
+        <div class="container max-w-6xl mx-auto px-4 py-8">
+            <div class="bg-white p-6 rounded-lg shadow-lg card mb-8">
+                <h2 class="text-2xl font-bold text-indigo-600 mb-4">About EduPath</h2>
+                <p class="text-gray-600 mb-4">EduPath is an AI-powered learning platform designed to provide personalized education for students of all ages. Our mission is to make learning engaging, interactive, and accessible through cutting-edge technology.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+                    <div class="about-feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <h3 class="text-lg font-semibold text-indigo-600 mb-2">Personalized Learning</h3>
+                        <p class="text-gray-600">AI-driven recommendations tailored to your learning style and progress.</p>
+                    </div>
+                    <div class="about-feature-card">
+                        <div class="feature-icon">🤖</div>
+                        <h3 class="text-lg font-semibold text-indigo-600 mb-2">AI Assistant</h3>
+                        <p class="text-gray-600">24/7 AI tutor to answer questions and provide guidance.</p>
+                    </div>
+                    <div class="about-feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3 class="text-lg font-semibold text-indigo-600 mb-2">Progress Tracking</h3>
+                        <p class="text-gray-600">Detailed analytics to monitor your learning journey.</p>
+                    </div>
+                    <div class="about-feature-card">
+                        <div class="feature-icon">🏆</div>
+                        <h3 class="text-lg font-semibold text-indigo-600 mb-2">Certification</h3>
+                        <p class="text-gray-600">Earn certificates upon course completion to showcase your skills.</p>
+                    </div>
+                    <div class="about-feature-card">
+                        <div class="feature-icon">📱</div>
+                        <h3 class="text-lg font-semibold text-indigo-600 mb-2">Mobile Friendly</h3>
+                        <p class="text-gray-600">Learn anytime, anywhere with our responsive design.</p>
+                    </div>
+                    <div class="about-feature-card">
+                        <div class="feature-icon">👨‍🏫</div>
+                        <h3 class="text-lg font-semibold text-indigo-600 mb-2">Expert Instructors</h3>
+                        <p class="text-gray-600">Learn from industry professionals and experienced educators.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12 mt-16">
+        <div class="container max-w-6xl mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-semibold text-cyan-400 mb-4">EduPath</h3>
+                    <p class="text-gray-400">AI-powered learning platform for students of all ages. Personalized education for better outcomes.</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold text-cyan-400 mb-4">Quick Links</h3>
+                    <a href="#" data-page="home" class="block text-gray-400 hover:text-white mb-2">Home</a>
+                    <a href="#" data-page="courses" class="block text-gray-400 hover:text-white mb-2">Courses</a>
+                    <a href="#" data-page="dashboard" class="block text-gray-400 hover:text-white mb-2">Dashboard</a>
+                    <a href="#" data-page="aiAssistant" class="block text-gray-400 hover:text-white mb-2">AI Assistant</a>
+                    <a href="#" data-page="about" class="block text-gray-400 hover:text-white mb-2">About</a>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold text-cyan-400 mb-4">Contact Us</h3>
+                    <a href="mailto:support@edupath.com" class="block text-gray-400 hover:text-white mb-2">support@edupath.com</a>
+                    <a href="tel:+1234567890" class="block text-gray-400 hover:text-white mb-2">+91 9159905590</a>
+                    <p class="text-gray-400">chennai-72</p>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 EduPath. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Course Data with 3 Questions per Lesson
+        const courses = [
+            {
+                id: 1,
+                name: "Data Structures",
+                description: "Learn about various data structures and their implementations",
+                image: "https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                lessons: [
+                    { id: 1, title: "Data Structures Introduction", video: { url: "https://www.youtube.com/watch?v=2bH09YEDdxE", type: "youtube", videoId: "2bH09YEDdxE", channel: "Tamil Programming" }, duration: "15 min" },
+                    { id: 2, title: "Arrays and Linked Lists", video: { url: "https://www.youtube.com/watch?v=WqUP2p5tCbM", type: "youtube", videoId: "WqUP2p5tCbM", channel: "Tamil Coding" }, duration: "20 min" },
+                    { id: 3, title: "Stacks and Queues", video: { url: "https://www.youtube.com/watch?v=QxGxuW2kF04", type: "youtube", videoId: "QxGxuW2kF04", channel: "Tamil Programming" }, duration: "25 min" },
+                    { id: 4, title: "Trees and Graphs", video: { url: "https://www.youtube.com/watch?v=fparztJ-ACM", type: "youtube", videoId: "fparztJ-ACM", channel: "Tamil Coding" }, duration: "25 min" }
+                ],
+                quizzes: [
+                    {
+                        lessonId: 1,
+                        questions: [
+                            { question: "What is the time complexity of array access?", options: ["O(n)", "O(1)", "O(log n)", "O(n^2)"], correct: 1 },
+                            { question: "Which data structure follows LIFO principle?", options: ["Queue", "Stack", "Array", "Linked List"], correct: 1 },
+                            { question: "What is the main advantage of linked lists over arrays?", options: ["Faster access", "Dynamic size", "Less memory", "Better cache performance"], correct: 1 }
+                        ]
+                    },
+                    {
+                        lessonId: 2,
+                        questions: [
+                            { question: "What is the worst-case time complexity of linear search?", options: ["O(1)", "O(log n)", "O(n)", "O(n^2)"], correct: 2 },
+                            { question: "In a doubly linked list, each node contains:", options: ["Only next pointer", "Only previous pointer", "Both next and previous pointers", "No pointers"], correct: 2 },
+                            { question: "Which operation is faster in arrays compared to linked lists?", options: ["Insertion", "Deletion", "Random access", "Search"], correct: 2 }
+                        ]
+                    },
+                    {
+                        lessonId: 3,
+                        questions: [
+                            { question: "What is the time complexity of push operation in stack?", options: ["O(1)", "O(n)", "O(log n)", "O(n^2)"], correct: 0 },
+                            { question: "Which data structure uses FIFO principle?", options: ["Stack", "Queue", "Tree", "Graph"], correct: 1 },
+                            { question: "What is stack overflow?", options: ["When stack is empty", "When stack is full", "When stack has one element", "When stack has even number of elements"], correct: 1 }
+                        ]
+                    },
+                    {
+                        lessonId: 4,
+                        questions: [
+                            { question: "Which traversal visits root node first?", options: ["Inorder", "Preorder", "Postorder", "Level order"], correct: 1 },
+                            { question: "What is a cycle in a graph?", options: ["A path that starts and ends at same vertex", "A path with no repeated vertices", "A single vertex", "An edge connecting two vertices"], correct: 0 },
+                            { question: "Which data structure is used for BFS?", options: ["Stack", "Queue", "Tree", "Array"], correct: 1 }
+                        ]
+                    }
+                ],
+                premium: false,
+                instructor: "Dr. Sarah Johnson"
+            },
+            {
+                id: 2,
+                name: "Java Programming",
+                description: "Master Java from basics to advanced concepts",
+                image: "https://images.unsplash.com/photo-1547658719-da2b51169166?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                lessons: [
+                    { id: 1, title: "Java Basics", video: { url: "https://www.youtube.com/watch?v=7yr81Dnn0NY", type: "youtube", videoId: "7yr81Dnn0NY", channel: "Tamil Java Tutorials" }, duration: "20 min" },
+                    { id: 2, title: "Object-Oriented Programming", video: { url: "https://www.youtube.com/watch?v=VkGjhmWXFsQ", type: "youtube", videoId: "VkGjhmWXFsQ", channel: "Tamil Programming" }, duration: "25 min" },
+                    { id: 3, title: "Exception Handling", video: { url: "https://www.youtube.com/watch?v=cklET8UVxQI", type: "youtube", videoId: "cklET8UVxQI", channel: "Tamil Java Tutorials" }, duration: "30 min" },
+                    { id: 4, title: "Multithreading", video: { url: "https://www.youtube.com/watch?v=5CCcEXzYM3Q", type: "youtube", videoId: "5CCcEXzYM3Q", channel: "Tamil Programming" }, duration: "30 min" }
+                ],
+                quizzes: [
+                    {
+                        lessonId: 1,
+                        questions: [
+                            { question: "What is the entry point of a Java program?", options: ["main()", "start()", "run()", "execute()"], correct: 0 },
+                            { question: "Which keyword is used to define a class in Java?", options: ["class", "struct", "object", "define"], correct: 0 },
+                            { question: "What is the default value of a boolean variable in Java?", options: ["true", "false", "0", "null"], correct: 1 }
+                        ]
+                    },
+                    {
+                        lessonId: 2,
+                        questions: [
+                            { question: "Which OOP concept allows one class to inherit from another?", options: ["Polymorphism", "Encapsulation", "Inheritance", "Abstraction"], correct: 2 },
+                            { question: "What is method overloading?", options: ["Same method name, different parameters", "Same method name, same parameters", "Different method name, same parameters", "Different method name, different parameters"], correct: 0 },
+                            { question: "Which keyword is used to prevent inheritance?", options: ["final", "static", "private", "protected"], correct: 0 }
+                        ]
+                    },
+                    {
+                        lessonId: 3,
+                        questions: [
+                            { question: "What is the superclass of all exceptions in Java?", options: ["Error", "RuntimeException", "Throwable", "Exception"], correct: 2 },
+                            { question: "Which block is always executed whether exception occurs or not?", options: ["try", "catch", "finally", "throw"], correct: 2 },
+                            { question: "What is the purpose of throws keyword?", options: ["To throw an exception", "To declare an exception", "To catch an exception", "To create an exception"], correct: 1 }
+                        ]
+                    },
+                    {
+                        lessonId: 4,
+                        questions: [
+                            { question: "How to create a thread in Java?", options: ["Extending Thread class", "Implementing Runnable interface", "Both A and B", "Using new Thread()"], correct: 2 },
+                            { question: "What is synchronization in Java?", options: ["Process of running multiple threads", "Process of controlling access to shared resources", "Process of creating threads", "Process of destroying threads"], correct: 1 },
+                            { question: "Which method is used to start a thread?", options: ["run()", "start()", "execute()", "begin()"], correct: 1 }
+                        ]
+                    }
+                ],
+                premium: false,
+                instructor: "Prof. Michael Chen"
+            },
+            {
+                id: 3,
+                name: "Prompt Engineering",
+                description: "Learn how to craft effective prompts for AI models",
+                image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                lessons: [
+                    { id: 1, title: "Introduction to Prompt Engineering", video: { url: "https://youtu.be/YvKJ8Xyjs6E", type: "youtube", videoId: "YvKJ8Xyjs6E", channel: "Tamil AI Tutorials" }, duration: "20 min" }
+                ],
+                quizzes: [
+                    {
+                        lessonId: 1,
+                        questions: [
+                            { question: "What is prompt engineering?", options: ["Coding AI", "Crafting inputs for AI", "Building hardware", "Data processing"], correct: 1 },
+                            { question: "Which of these is a key element of good prompts?", options: ["Ambiguity", "Specificity", "Lengthiness", "Complexity"], correct: 1 },
+                            { question: "What does 'few-shot learning' refer to in prompt engineering?", options: ["No examples", "One example", "Few examples", "Many examples"], correct: 2 }
+                        ]
+                    }
+                ],
+                premium: false,
+                instructor: "Dr. Alex Rodriguez"
+            },
+            {
+                id: 4,
+                name: "Full Stack Development",
+                description: "Build complete web applications from front to back",
+                image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                lessons: [
+                    { id: 1, title: "Introduction", video: { url: "https://youtu.be/fiZ34QqvNYs", type: "youtube", videoId: "fiZ34QqvNYs", channel: "Tamil Web Development" }, duration: "20 min" },
+                    { id: 2, title: "Frontend and Backend Development", video: { url: "https://youtu.be/demt3uulyzc", type: "youtube", videoId: "demt3uulyzc", channel: "Tamil Programming" }, duration: "25 min" },
+                    { id: 3, title: "Database Integration", video: { url: "https://youtu.be/8YwiJK67RBo", type: "youtube", videoId: "8YwiJK67RBo", channel: "Tamil Web Development" }, duration: "30 min" },
+                    { id: 4, title: "Building REST APIs", video: { url: "https://youtu.be/2O8JSO5F3RE", type: "youtube", videoId: "2O8JSO5F3RE", channel: "Tamil Programming" }, duration: "25 min" }
+                ],
+                quizzes: [
+                    {
+                        lessonId: 1,
+                        questions: [
+                            { question: "What does HTML stand for?", options: ["Hyper Text Markup Language", "High Tech Machine Learning", "Hyper Transfer Markup Language", "None"], correct: 0 },
+                            { question: "Which language is used for styling web pages?", options: ["HTML", "CSS", "JavaScript", "Python"], correct: 1 },
+                            { question: "What is the purpose of JavaScript in web development?", options: ["Styling", "Structure", "Interactivity", "Database"], correct: 2 }
+                        ]
+                    },
+                    {
+                        lessonId: 2,
+                        questions: [
+                            { question: "What is React used for?", options: ["Backend development", "Frontend development", "Database management", "Server configuration"], correct: 1 },
+                            { question: "Which language is commonly used for backend?", options: ["HTML", "CSS", "JavaScript", "Python"], correct: 3 },
+                            { question: "What is Node.js?", options: ["Frontend framework", "Backend runtime", "Database", "Operating system"], correct: 1 }
+                        ]
+                    },
+                    {
+                        lessonId: 3,
+                        questions: [
+                            { question: "What is SQL used for?", options: ["Styling websites", "Managing databases", "Creating animations", "Writing algorithms"], correct: 1 },
+                            { question: "Which database is NoSQL?", options: ["MySQL", "PostgreSQL", "MongoDB", "SQLite"], correct: 2 },
+                            { question: "What does CRUD stand for?", options: ["Create Read Update Delete", "Copy Remove Update Duplicate", "Create Remove Upload Download", "Copy Read Upload Delete"], correct: 0 }
+                        ]
+                    },
+                    {
+                        lessonId: 4,
+                        questions: [
+                            { question: "What is the purpose of a REST API?", options: ["To style web pages", "To enable communication between client and server", "To store database records", "To secure a website"], correct: 1 },
+                            { question: "Which HTTP method is used to retrieve data in a REST API?", options: ["POST", "GET", "PUT", "DELETE"], correct: 1 },
+                            { question: "What does JSON stand for in the context of REST APIs?", options: ["JavaScript Object Notation", "Java Standard Output Network", "JavaScript Online Node", "Java System Operations"], correct: 0 }
+                        ]
+                    }
+                ],
+                premium: false,
+                instructor: "Prof. Priya Sharma"
+            },
+            {
+                id: 5,
+                name: "Python Programming",
+                description: "Learn Python from beginner to advanced levels",
+                image: "https://images.unsplash.com/photo-1526379879527-8559ecfcaec0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                lessons: [
+                    { id: 1, title: "Python Basics", video: { url: "https://youtu.be/URHCICLqslI", type: "youtube", videoId: "URHCICLqslI", channel: "Tamil Python Tutorials" }, duration: "25 min" },
+                    { id: 2, title: "Data Structures in Python", video: { url: "https://youtu.be/u-i_1OlZgWA", type: "youtube", videoId: "u-i_1OlZgWA", channel: "Tamil Programming" }, duration: "30 min" },
+                    { id: 3, title: "List, Tuple, Set, Dictionary in Python", video: { url: "https://youtu.be/hvmduOeCh4o", type: "youtube", videoId: "hvmduOeCh4o", channel: "Tamil Python Tutorials" }, duration: "35 min" }
+                ],
+                quizzes: [
+                    {
+                        lessonId: 1,
+                        questions: [
+                            { question: "Which of the following is a correct way to print 'Hello' in Python?", options: ["print('Hello')", "echo 'Hello'", "printf('Hello')", "cout << 'Hello'"], correct: 0 },
+                            { question: "How do you create a comment in Python?", options: ["// comment", "/* comment */", "# comment", "-- comment"], correct: 2 },
+                            { question: "Which data type is mutable in Python?", options: ["Tuple", "String", "List", "Integer"], correct: 2 }
+                        ]
+                    },
+                    {
+                        lessonId: 2,
+                        questions: [
+                            { question: "What is the output of len([1,2,3])?", options: ["1", "2", "3", "4"], correct: 2 },
+                            { question: "Which method adds an element to a list?", options: ["add()", "append()", "insert()", "push()"], correct: 1 },
+                            { question: "What does the range(5) function generate?", options: ["[0,1,2,3,4]", "[1,2,3,4,5]", "[0,1,2,3,4,5]", "[1,2,3,4]"], correct: 0 }
+                        ]
+                    },
+                    {
+                        lessonId: 3,
+                        questions: [
+                            { question: "Which collection is unordered in Python?", options: ["List", "Tuple", "Set", "Array"], correct: 2 },
+                            { question: "How do you access values in a dictionary?", options: ["By index", "By key", "By value", "By position"], correct: 1 },
+                            { question: "Which data structure allows duplicate elements?", options: ["Set", "Dictionary", "List", "Frozenset"], correct: 2 }
+                        ]
+                    }
+                ],
+                premium: false,
+                instructor: "Dr. Robert Wilson"
+            },
+            {
+                id: 6,
+                name: "C++ Programming",
+                description: "Master C++ for system and application development",
+                image: "https://images.unsplash.com/photo-1610563166150-b34df4f3bcd6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                lessons: [
+                    { id: 1, title: "C++ Basics", video: { url: "https://youtu.be/McojvctVsUs", type: "youtube", videoId: "McojvctVsUs", channel: "Tamil C++ Tutorials" }, duration: "20 min" },
+                    { id: 2, title: "Object-Oriented Programming", video: { url: "https://youtu.be/pS8EP_fCeW0", type: "youtube", videoId: "pS8EP_fCeW0", channel: "Tamil Programming" }, duration: "25 min" },
+                    { id: 3, title: "Memory Management", video: { url: "https://youtu.be/lNvAuhDq7S0", type: "youtube", videoId: "lNvAuhDq7S0", channel: "Tamil C++ Tutorials" }, duration: "30 min" }
+                ],
+                quizzes: [
+                    {
+                        lessonId: 1,
+                        questions: [
+                            { question: "What is the correct syntax for the main function in C++?", options: ["void main()", "int main()", "main()", "start()"], correct: 1 },
+                            { question: "Which operator is used for memory allocation in C++?", options: ["malloc", "new", "alloc", "create"], correct: 1 },
+                            { question: "What is the extension of a C++ source file?", options: [".c", ".cpp", ".java", ".py"], correct: 1 }
+                        ]
+                    },
+                    {
+                        lessonId: 2,
+                        questions: [
+                            { question: "What is encapsulation in OOP?", options: ["Binding data and methods together", "Inheriting properties", "Multiple forms", "Hiding implementation"], correct: 0 },
+                            { question: "Which access specifier is most restrictive?", options: ["public", "private", "protected", "default"], correct: 1 },
+                            { question: "What is a constructor?", options: ["Special method for object creation", "Method for destruction", "Variable type", "Operator"], correct: 0 }
+                        ]
+                    },
+                    {
+                        lessonId: 3,
+                        questions: [
+                            { question: "What is the purpose of delete operator?", options: ["Create memory", "Allocate memory", "Deallocate memory", "Initialize memory"], correct: 2 },
+                            { question: "Which is used to allocate memory for array?", options: ["new[]", "malloc[]", "alloc[]", "create[]"], correct: 0 },
+                            { question: "What is memory leak?", options: ["Memory that is properly freed", "Memory that is not freed", "Memory that is allocated", "Memory that is initialized"], correct: 1 }
+                        ]
+                    }
+                ],
+                premium: false,
+                instructor: "Prof. David Lee"
+            }
+        ];
+
+        // MyOwnDB API
+        const MYOWNDB_API = "https://YOUR-APP-NAME.onrender.com"; // <-- Render URL inga podu
+
+        // User Data
+        let currentUser = {
+            name: "User",
+            age: null,
+            role: "",
+            profileImage: null,
+            enrolledCourses: [],
+            progress: {},
+            currentCourse: null,
+            currentLesson: null,
+            certificates: {} // Store certificate data
+        };
+
+        // Quiz Data
+        let currentQuiz = null;
+        let userQuizAnswers = [];
+        let currentQuestionIndex = 0;
+        let quizScore = 0;
+
+        // DOM Elements
+        const signupModal = document.getElementById('signupModal');
+        const signupForm = document.getElementById('signupForm');
+        const cancelSignupBtn = document.getElementById('cancelSignupBtn');
+        const submitSignupBtn = document.getElementById('submitSignupBtn');
+        const certificateModal = document.getElementById('certificateModal');
+        const certificateName = document.getElementById('certificateName');
+        const certificateCourse = document.getElementById('certificateCourse');
+        const certificateDate = document.getElementById('certificateDate');
+        const certificateId = document.getElementById('certificateId');
+        const instructorName = document.getElementById('instructorName');
+        const downloadCertificateBtn = document.getElementById('downloadCertificateBtn');
+        const closeCertificateBtn = document.getElementById('closeCertificateBtn');
+        const pages = document.querySelectorAll('.page');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const loginBtn = document.getElementById('loginBtn');
+        const signupBtn = document.getElementById('signupBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const startLearningBtn = document.getElementById('startLearningBtn');
+        const enrollButtons = document.querySelectorAll('.enroll-btn');
+        const studentNameElement = document.getElementById('studentName');
+        const progressPercentElement = document.getElementById('progressPercent');
+        const courseCountElement = document.getElementById('courseCount');
+        const completedLessonsElement = document.getElementById('completedLessons');
+        const averageScoreElement = document.getElementById('averageScore');
+        const enrolledCoursesElement = document.getElementById('enrolledCourses');
+        const chatMessagesElement = document.getElementById('chatMessages');
+        const userInputElement = document.getElementById('userInput');
+        const sendMessageBtn = document.getElementById('sendMessageBtn');
+        const courseTitleElement = document.getElementById('courseTitle');
+        const courseDescriptionElement = document.getElementById('courseDescription');
+        const lessonListElement = document.getElementById('lessonList');
+        const lessonDisplayElement = document.getElementById('lessonDisplay');
+        const quizSectionElement = document.getElementById('quizSection');
+        const quizContentElement = document.getElementById('quizContent');
+        const startQuizBtn = document.getElementById('startQuizBtn');
+        const quizTitleElement = document.getElementById('quizTitle');
+        const questionTextElement = document.getElementById('questionText');
+        const optionsContainerElement = document.getElementById('optionsContainer');
+        const prevQuestionBtn = document.getElementById('prevQuestionBtn');
+        const nextQuestionBtn = document.getElementById('nextQuestionBtn');
+        const quizContainerElement = document.getElementById('quizContainer');
+        const quizResultElement = document.getElementById('quizResult');
+        const quizScoreElement = document.getElementById('quizScore');
+        const quizFeedbackElement = document.getElementById('quizFeedback');
+        const backToCourseBtn = document.getElementById('backToCourseBtn');
+        const retryQuizBtn = document.getElementById('retryQuizBtn');
+        const mainHeader = document.getElementById('mainHeader');
+        const loginNameInput = document.getElementById('loginName');
+        const loginAgeInput = document.getElementById('loginAge');
+        const loginRoleSelect = document.getElementById('loginRole');
+        const profileImageInput = document.getElementById('profileImage');
+        const imagePreviewElement = document.getElementById('imagePreview');
+        const headerProfileImage = document.getElementById('headerProfileImage');
+        const quizProgressFill = document.getElementById('quizProgressFill');
+        const currentQuestionNumber = document.getElementById('currentQuestionNumber');
+        const totalQuestions = document.getElementById('totalQuestions');
+        const quizScoreDisplay = document.getElementById('quizScoreDisplay');
+
+        // Initialize the application
+        function init() {
+            try {
+                setupEventListeners();
+                checkLoginStatus();
+            } catch (error) {
+                console.error('Initialization error:', error);
+                alert('An error occurred while loading the application.');
+            }
+        }
+
+        // Check if user is logged in
+        function checkLoginStatus() {
+            if (!currentUser.role) {
+                showPage('preLogin');
+                mainHeader.classList.add('hidden');
+            } else {
+                showPage('home'); // Changed from dashboard to home
+                mainHeader.classList.remove('hidden');
+                loadDashboard();
+            }
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const pageId = link.getAttribute('data-page');
+                    showPage(pageId);
+                    navLinks.forEach(nav => nav.classList.remove('text-indigo-600'));
+                    link.classList.add('text-indigo-600');
+                });
+            });
+
+            loginBtn.addEventListener('click', async () => {
+                const name = loginNameInput.value.trim();
+                const age = parseInt(loginAgeInput.value);
+                const role = loginRoleSelect.value;
+
+                if (!name || !age || !role) {
+                    alert('Please fill in all required fields (Name, Age, Role).');
+                    return;
+                }
+                if (age < 1 || age > 150) {
+                    alert('Please enter a valid age.');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${MYOWNDB_API}/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name, age, role })
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        alert(data.message || 'Login failed.');
+                        return;
+                    }
+
+                    currentUser = {
+                        ...currentUser,
+                        ...data.user,
+                        role: data.user.role.toLowerCase(),
+                        enrolledCourses: data.user.enrolledCourses || currentUser.enrolledCourses,
+                        progress: data.user.progress || currentUser.progress,
+                        certificates: data.user.certificates || currentUser.certificates
+                    };
+
+                    localStorage.setItem('myowndbUserId', data.user.id);
+
+                    if (profileImageInput.files.length > 0) {
+                        const file = profileImageInput.files[0];
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                            currentUser.profileImage = reader.result;
+                            headerProfileImage.src = reader.result;
+                            headerProfileImage.classList.remove('hidden');
+                        };
+                        reader.readAsDataURL(file);
+                    }
+
+                    mainHeader.classList.remove('hidden');
+                    showPage('home');
+                    navLinks.forEach(nav => nav.classList.remove('text-indigo-600'));
+                    document.querySelector('[data-page="home"]').classList.add('text-indigo-600');
+                    loadDashboard();
+                } catch (error) {
+                    console.error(error);
+                    alert('Could not connect to MyOwnDB. Make sure node server.js is running.');
+                }
+            });
+
+            signupBtn.addEventListener('click', () => {
+                signupModal.classList.remove('hidden');
+            });
+
+            cancelSignupBtn.addEventListener('click', () => {
+                signupModal.classList.add('hidden');
+                document.getElementById('userName').value = '';
+                document.getElementById('userAge').value = '';
+                document.getElementById('userRole').value = '';
+                document.getElementById('preferredCourse').value = '';
+            });
+
+            submitSignupBtn.addEventListener('click', async () => {
+                const name = document.getElementById('userName').value.trim();
+                const age = parseInt(document.getElementById('userAge').value);
+                const userRole = document.getElementById('userRole').value;
+                const courseId = parseInt(document.getElementById('preferredCourse').value);
+
+                if (!name || !age || !userRole) {
+                    alert('Please fill in all required fields.');
+                    return;
+                }
+                if (age < 1 || age > 150) {
+                    alert('Please enter a valid age.');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${MYOWNDB_API}/register`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            name,
+                            age,
+                            role: userRole,
+                            preferredCourse: courseId || null
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        alert(data.message || 'Registration failed.');
+                        return;
+                    }
+
+                    currentUser = {
+                        ...currentUser,
+                        ...data.user,
+                        role: userRole,
+                        enrolledCourses: courseId ? [courseId] : [],
+                        progress: courseId ? {
+                            [courseId]: { completedLessons: [], scores: {} }
+                        } : {},
+                        certificates: {}
+                    };
+
+                    localStorage.setItem('myowndbUserId', data.user.id);
+
+                    signupModal.classList.add('hidden');
+                    document.getElementById('userName').value = '';
+                    document.getElementById('userAge').value = '';
+                    document.getElementById('userRole').value = '';
+                    document.getElementById('preferredCourse').value = '';
+
+                    mainHeader.classList.remove('hidden');
+                    showPage('home');
+                    navLinks.forEach(nav => nav.classList.remove('text-indigo-600'));
+                    document.querySelector('[data-page="home"]').classList.add('text-indigo-600');
+                    loadDashboard();
+                    alert('Registration successful! Your details are saved in MyOwnDB.');
+                } catch (error) {
+                    console.error(error);
+                    alert('Could not connect to MyOwnDB. Make sure node server.js is running.');
+                }
+            });
+
+            logoutBtn.addEventListener('click', () => {
+                localStorage.removeItem('myowndbUserId');
+                currentUser = {
+                    name: "User",
+                    age: null,
+                    role: "",
+                    profileImage: null,
+                    enrolledCourses: [],
+                    progress: {},
+                    currentCourse: null,
+                    currentLesson: null,
+                    certificates: {}
+                };
+                headerProfileImage.classList.add('hidden');
+                loginNameInput.value = '';
+                loginAgeInput.value = '';
+                loginRoleSelect.value = '';
+                profileImageInput.value = '';
+                imagePreviewElement.innerHTML = '';
+                checkLoginStatus();
+            });
+
+            profileImageInput.addEventListener('change', () => {
+                if (profileImageInput.files.length > 0) {
+                    const file = profileImageInput.files[0];
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        const img = document.createElement('img');
+                        img.src = reader.result;
+                        img.className = 'profile-image-preview';
+                        imagePreviewElement.innerHTML = '';
+                        imagePreviewElement.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    imagePreviewElement.innerHTML = '';
+                }
+            });
+
+            startLearningBtn.addEventListener('click', () => {
+                showPage('courses');
+                navLinks.forEach(nav => nav.classList.remove('text-indigo-600'));
+                document.querySelector('[data-page="courses"]').classList.add('text-indigo-600');
+            });
+
+            enrollButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const courseId = parseInt(button.getAttribute('data-course'));
+                    enrollInCourse(courseId);
+                });
+            });
+
+            sendMessageBtn.addEventListener('click', processUserMessage);
+            userInputElement.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') processUserMessage();
+            });
+
+            startQuizBtn.addEventListener('click', startQuiz);
+            prevQuestionBtn.addEventListener('click', showPreviousQuestion);
+            nextQuestionBtn.addEventListener('click', showNextQuestion);
+            backToCourseBtn.addEventListener('click', () => {
+                showPage('course');
+            });
+            retryQuizBtn.addEventListener('click', startQuiz);
+            downloadCertificateBtn.addEventListener('click', downloadCertificate);
+            closeCertificateBtn.addEventListener('click', () => {
+                certificateModal.classList.add('hidden');
+            });
+        }
+
+        function showPage(pageId) {
+            pages.forEach(page => page.classList.add('hidden'));
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.remove('hidden');
+                if (pageId === 'dashboard') loadDashboard();
+                else if (pageId === 'course' && currentUser.currentCourse) loadCoursePage();
+                else if (pageId === 'aiAssistant') loadAIAssistant();
+            }
+        }
+
+        function enrollInCourse(courseId) {
+            if (!currentUser.enrolledCourses.includes(courseId)) {
+                currentUser.enrolledCourses.push(courseId);
+                currentUser.progress[courseId] = {
+                    completedLessons: [],
+                    scores: {}
+                };
+                const course = courses.find(c => c.id === courseId);
+                alert(`Successfully enrolled in ${course.name}`);
+                openCourse(courseId);
+            } else {
+                openCourse(courseId);
+            }
+        }
+
+        function openCourse(courseId) {
+            currentUser.currentCourse = courseId;
+            showPage('course');
+            loadCoursePage();
+        }
+
+        function loadCoursePage() {
+            const course = courses.find(c => c.id === currentUser.currentCourse);
+            if (!course) return;
+            courseTitleElement.textContent = course.name;
+            courseDescriptionElement.textContent = course.description;
+            lessonListElement.innerHTML = '';
+            course.lessons.forEach(lesson => {
+                const isCompleted = currentUser.progress[course.id]?.completedLessons.includes(lesson.id);
+                const lessonItem = document.createElement('div');
+                lessonItem.className = `p-4 border-b cursor-pointer hover:bg-gray-100 ${isCompleted ? 'bg-green-100' : ''} ${currentUser.currentLesson?.id === lesson.id ? 'bg-indigo-100' : ''} lesson-item`;
+                lessonItem.innerHTML = `
+                    <strong>Lesson ${lesson.id}: ${lesson.title}</strong>
+                    <span class="block text-sm text-gray-600">${lesson.duration}${isCompleted ? ' <span class="text-green-600">✔ Completed</span>' : ''}</span>
+                `;
+                lessonItem.addEventListener('click', () => loadLesson(lesson.id));
+                lessonListElement.appendChild(lessonItem);
+            });
+
+            // Load the first lesson by default if none is selected
+            if (!currentUser.currentLesson && course.lessons.length > 0) {
+                loadLesson(course.lessons[0].id);
+            } else if (currentUser.currentLesson) {
+                loadLesson(currentUser.currentLesson.id);
+            }
+        }
+
+        function loadLesson(lessonId) {
+            const course = courses.find(c => c.id === currentUser.currentCourse);
+            if (!course) return;
+            const lesson = course.lessons.find(l => l.id === lessonId);
+            if (!lesson) return;
+            currentUser.currentLesson = lesson;
+            // Update lesson list to highlight current lesson
+            const lessonItems = lessonListElement.querySelectorAll('.lesson-item');
+            lessonItems.forEach(item => {
+                item.classList.remove('bg-indigo-100');
+                if (item.textContent.includes(`Lesson ${lessonId}`)) {
+                    item.classList.add('bg-indigo-100');
+                }
+            });
+
+            // Display lesson content
+            lessonDisplayElement.innerHTML = `
+                <h3 class="text-xl font-semibold text-indigo-600 mb-4">${lesson.title}</h3>
+                <div class="video-container mb-6">
+                    ${lesson.video.type === 'youtube' ? `
+                        <iframe width="100%" height="400" src="https://www.youtube.com/embed/${lesson.video.videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    ` : `
+                        <video controls width="100%" height="400">
+                            <source src="${lesson.video.url}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    `}
+                </div>
+                <p class="text-gray-600">Duration: ${lesson.duration}</p>
+            `;
+
+            // Show quiz button if available
+            const quiz = course.quizzes.find(q => q.lessonId === lessonId);
+            quizSectionElement.classList.toggle('hidden', !quiz);
+            if (quiz) {
+                quizContentElement.innerHTML = `
+                    <p class="text-gray-600">Test your knowledge with a short quiz after completing the lesson.</p>
+                `;
+            }
+        }
+
+        function startQuiz() {
+            const course = courses.find(c => c.id === currentUser.currentCourse);
+            const quiz = course.quizzes.find(q => q.lessonId === currentUser.currentLesson.id);
+            if (!quiz) return;
+            currentQuiz = quiz;
+            userQuizAnswers = new Array(quiz.questions.length).fill(null);
+            currentQuestionIndex = 0;
+            quizScore = 0;
+            showPage('quiz');
+            loadQuizQuestion();
+        }
+
+        function loadQuizQuestion() {
+            if (!currentQuiz) return;
+            const question = currentQuiz.questions[currentQuestionIndex];
+            questionTextElement.textContent = question.question;
+            optionsContainerElement.innerHTML = '';
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('button');
+                optionElement.className = `btn w-full p-3 text-left border rounded-lg hover:bg-indigo-50 ${userQuizAnswers[currentQuestionIndex] === index ? 'bg-indigo-100 border-indigo-600' : ''}`;
+                optionElement.textContent = option;
+                optionElement.addEventListener('click', () => selectOption(index));
+                optionsContainerElement.appendChild(optionElement);
+            });
+            currentQuestionNumber.textContent = currentQuestionIndex + 1;
+            totalQuestions.textContent = currentQuiz.questions.length;
+            quizProgressFill.style.width = `${((currentQuestionIndex + 1) / currentQuiz.questions.length) * 100}%`;
+            quizScoreDisplay.textContent = `Score: ${calculateScore()}%`;
+            prevQuestionBtn.disabled = currentQuestionIndex === 0;
+            nextQuestionBtn.textContent = currentQuestionIndex === currentQuiz.questions.length - 1 ? 'Submit' : 'Next';
+        }
+
+        function selectOption(index) {
+            userQuizAnswers[currentQuestionIndex] = index;
+            loadQuizQuestion();
+        }
+
+        function showPreviousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuizQuestion();
+            }
+        }
+
+        function showNextQuestion() {
+            if (currentQuestionIndex < currentQuiz.questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuizQuestion();
+            } else {
+                submitQuiz();
+            }
+        }
+
+        function calculateScore() {
+            let correctAnswers = 0;
+            currentQuiz.questions.forEach((question, index) => {
+                if (userQuizAnswers[index] === question.correct) {
+                    correctAnswers++;
+                }
+            });
+            return Math.round((correctAnswers / currentQuiz.questions.length) * 100);
+        }
+
+        function submitQuiz() {
+            quizScore = calculateScore();
+            const course = courses.find(c => c.id === currentUser.currentCourse);
+            const lessonId = currentUser.currentLesson.id;
+            // Update progress
+            if (!currentUser.progress[course.id].completedLessons.includes(lessonId)) {
+                currentUser.progress[course.id].completedLessons.push(lessonId);
+            }
+            currentUser.progress[course.id].scores[lessonId] = quizScore;
+            // Show results
+            quizContainerElement.classList.add('hidden');
+            quizResultElement.classList.remove('hidden');
+            quizScoreElement.textContent = `${quizScore}%`;
+            quizFeedbackElement.textContent = quizScore >= 70 ? 
+                'Great job! You have mastered this lesson.' : 
+                'Good effort! Consider reviewing the lesson to improve your score.';
+            // Check if course is completed
+            if (currentUser.progress[course.id].completedLessons.length === course.lessons.length) {
+                generateCertificate(course.id);
+            }
+            loadDashboard();
+        }
+
+        function generateCertificate(courseId) {
+            const course = courses.find(c => c.id === courseId);
+            const certificateIdValue = `EDP-${new Date().getFullYear()}-${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
+            currentUser.certificates[courseId] = {
+                courseName: course.name,
+                date: new Date().toLocaleDateString(),
+                id: certificateIdValue,
+                instructor: course.instructor
+            };
+            certificateName.textContent = currentUser.name;
+            certificateCourse.textContent = course.name;
+            certificateDate.textContent = currentUser.certificates[courseId].date;
+            certificateId.textContent = certificateIdValue;
+            instructorName.textContent = course.instructor;
+            certificateModal.classList.remove('hidden');
+        }
+
+        function downloadCertificate() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Certificate design
+            doc.setFillColor(255, 255, 255);
+            doc.rect(0, 0, 210, 297, 'F');
+            
+            // Border
+            doc.setDrawColor(30, 58, 138);
+            doc.setLineWidth(5);
+            doc.rect(15, 15, 180, 267);
+            
+            // Title
+            doc.setFont('Times', 'bold');
+            doc.setFontSize(30);
+            doc.setTextColor(30, 58, 138);
+            doc.text('Certificate of Achievement', 105, 50, { align: 'center' });
+            
+            // Subtitle
+            doc.setFont('Times', 'italic');
+            doc.setFontSize(14);
+            doc.setTextColor(124, 58, 237);
+            doc.text('Awarded for Outstanding Performance', 105, 65, { align: 'center' });
+            
+            // Name
+            doc.setFont('Times', 'bold');
+            doc.setFontSize(24);
+            doc.setTextColor(30, 41, 59);
+            doc.text(currentUser.name, 105, 100, { align: 'center' });
+            
+            // Course
+            doc.setFont('Helvetica', 'normal');
+            doc.setFontSize(16);
+            doc.setTextColor(219, 39, 119);
+            doc.text(`has successfully completed the course`, 105, 120, { align: 'center' });
+            doc.text(certificateCourse.textContent, 105, 135, { align: 'center' });
+            
+            // Date and Director
+            doc.setFontSize(12);
+            doc.setTextColor(100, 116, 139);
+            doc.text(`Date: ${certificateDate.textContent}`, 50, 200);
+            doc.text('Director: EduPath Academy', 160, 200, { align: 'right' });
+            
+            // Certificate ID
+            doc.setFont('Courier', 'normal');
+            doc.setFontSize(10);
+            doc.setTextColor(148, 163, 184);
+            doc.text(`Certificate ID: ${certificateId.textContent}`, 105, 240, { align: 'center' });
+            
+            // Watermark
+            doc.setFontSize(60);
+            doc.setTextColor(124, 58, 237, 0.2);
+            doc.text('EDUPATH', 105, 150, { angle: -45, align: 'center' });
+            
+            doc.save(`EduPath_Certificate_${currentUser.name}_${certificateCourse.textContent}.pdf`);
+        }
+
+        function loadDashboard() {
+            studentNameElement.textContent = currentUser.name;
+            courseCountElement.textContent = currentUser.enrolledCourses.length;
+            let totalLessons = 0;
+            let completedLessons = 0;
+            let totalScore = 0;
+            let scoreCount = 0;
+            enrolledCoursesElement.innerHTML = '';
+            currentUser.enrolledCourses.forEach(courseId => {
+                const course = courses.find(c => c.id === courseId);
+                if (!course) return;
+                totalLessons += course.lessons.length;
+                const progress = currentUser.progress[courseId];
+                completedLessons += progress.completedLessons.length;
+                Object.values(progress.scores).forEach(score => {
+                    totalScore += score;
+                    scoreCount++;
+                });
+                const courseProgress = Math.round((progress.completedLessons.length / course.lessons.length) * 100);
+                const courseCard = document.createElement('div');
+                courseCard.className = 'course-card bg-white rounded-lg shadow-lg overflow-hidden card';
+                courseCard.innerHTML = `
+                    <img src="${course.image}" alt="${course.name}" class="course-image" onerror="this.src='https://images.unsplash.com/photo-1516321310762-7d9c781e7d8e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80';">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-indigo-600 mb-2">${course.name}</h3>
+                        <div class="flex justify-between text-gray-600 text-sm mb-4">
+                            <span>${progress.completedLessons.length}/${course.lessons.length} Lessons</span>
+                            <span>${courseProgress}% Complete</span>
+                        </div>
+                        <div class="quiz-progress mb-4">
+                            <div class="quiz-progress-fill" style="width: ${courseProgress}%"></div>
+                        </div>
+                        <button class="btn bg-indigo-600 text-white px-4 py-2 rounded w-full hover:bg-indigo-700 continue-course-btn" data-course="${course.id}">Continue Course</button>
+                        ${currentUser.certificates[course.id] ? `
+                            <button class="btn bg-green-600 text-white px-4 py-2 rounded w-full hover:bg-green-700 mt-2 view-certificate-btn" data-course="${course.id}">View Certificate</button>
+                        ` : ''}
+                    </div>
+                `;
+                enrolledCoursesElement.appendChild(courseCard);
+            });
+
+            // Update dashboard stats
+            progressPercentElement.textContent = totalLessons > 0 ? `${Math.round((completedLessons / totalLessons) * 100)}%` : '0%';
+            completedLessonsElement.textContent = completedLessons;
+            averageScoreElement.textContent = scoreCount > 0 ? `${Math.round(totalScore / scoreCount)}%` : '0%';
+
+            // Add event listeners for continue buttons
+            document.querySelectorAll('.continue-course-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const courseId = parseInt(button.getAttribute('data-course'));
+                    openCourse(courseId);
+                });
+            });
+
+            // Add event listeners for certificate buttons
+            document.querySelectorAll('.view-certificate-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const courseId = parseInt(button.getAttribute('data-course'));
+                    const certificate = currentUser.certificates[courseId];
+                    if (certificate) {
+                        certificateName.textContent = currentUser.name;
+                        certificateCourse.textContent = certificate.courseName;
+                        certificateDate.textContent = certificate.date;
+                        certificateId.textContent = certificate.id;
+                        instructorName.textContent = certificate.instructor;
+                        certificateModal.classList.remove('hidden');
+                    }
+                });
+            });
+
+            initializeDashboardChart();
+        }
+
+        function initializeDashboardChart() {
+            let ctx = document.getElementById('progressChart');
+            if (ctx) {
+                ctx.parentNode.removeChild(ctx);
+            }
+            ctx = document.createElement('canvas');
+            ctx.id = 'progressChart';
+            ctx.className = 'mt-6';
+            document.querySelector('#dashboard .bg-white').appendChild(ctx);
+            const courseProgress = currentUser.enrolledCourses.map(courseId => {
+                const course = courses.find(c => c.id === courseId);
+                const progress = currentUser.progress[courseId] || { completedLessons: [] };
+                return {
+                    label: course.name,
+                    value: Math.round((progress.completedLessons.length / course.lessons.length) * 100)
+                };
+            });
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: courseProgress.map(p => p.label),
+                    datasets: [{
+                        label: 'Progress %',
+                        data: courseProgress.map(p => p.value),
+                        backgroundColor: 'rgba(124, 58, 237, 0.6)',
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        async function processUserMessage() {
+            const userMessage = userInputElement.value.trim();
+            if (!userMessage) return;
+            // Display user message
+            const userMessageElement = document.createElement('div');
+            userMessageElement.className = 'message bg-gray-200 text-gray-800 p-3 rounded-lg max-w-[80%] ml-auto mt-2';
+            userMessageElement.textContent = userMessage;
+            chatMessagesElement.appendChild(userMessageElement);
+            userInputElement.value = '';
+            // Simulate AI response
+            const aiMessageElement = document.createElement('div');
+            aiMessageElement.className = 'message bg-indigo-600 text-white p-3 rounded-lg max-w-[80%] mt-2';
+            
+            try {
+                // Here you would integrate with Grok's API or another AI model
+                // For demo purposes, we'll use a simple rule-based response system
+                let response = 'Sorry, I didn’t fully understand your question. Could you provide more details?';
+                if (userMessage.toLowerCase().includes('progress')) {
+                    response = `Your overall progress is ${progressPercentElement.textContent}. You've completed ${completedLessonsElement.textContent} lessons across ${courseCountElement.textContent} courses with an average quiz score of ${averageScoreElement.textContent}.`;
+                } else if (userMessage.toLowerCase().includes('course') || userMessage.toLowerCase().includes('enrolled')) {
+                    const enrolledCourseNames = currentUser.enrolledCourses.map(id => courses.find(c => c.id === id).name).join(', ');
+                    response = enrolledCourseNames ? 
+                        `You are enrolled in the following courses: ${enrolledCourseNames}. Would you like details about any specific course?` : 
+                        'You are not enrolled in any courses yet. Visit the Courses page to enroll!';
+                } else if (userMessage.toLowerCase().includes('quiz') || userMessage.toLowerCase().includes('score')) {
+                    response = `Your average quiz score is ${averageScoreElement.textContent}. Want tips to improve your scores?`;
+                } else if (userMessage.toLowerCase().includes('certificate')) {
+                    const certificates = Object.values(currentUser.certificates);
+                    response = certificates.length > 0 ? 
+                        `You have earned ${certificates.length} certificate(s) for: ${certificates.map(c => c.courseName).join(', ')}. View them in your dashboard!` : 
+                        'You haven’t earned any certificates yet. Complete a course to earn one!';
+                } else if (userMessage.toLowerCase().includes('recommend')) {
+                    const availableCourses = courses.filter(c => !currentUser.enrolledCourses.includes(c.id));
+                    response = availableCourses.length > 0 ? 
+                        `Based on your profile, I recommend: ${availableCourses[0].name}. It’s a great course to expand your skills!` : 
+                        'You’ve enrolled in all available courses! Keep up the great work.';
+                }
+                aiMessageElement.textContent = response;
+            } catch (error) {
+                console.error('AI response error:', error);
+                aiMessageElement.textContent = 'Sorry, there was an error processing your request. Please try again.';
+            }
+            chatMessagesElement.appendChild(aiMessageElement);
+            chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight;
+        }
+
+        function loadAIAssistant() {
+            chatMessagesElement.innerHTML = `
+                <div class="message bg-indigo-600 text-white p-3 rounded-lg max-w-[80%]">Hello! I'm your AI learning assistant. How can I help you today?</div>
+            `;
+        }
+
+        init();
+    </script>
+</body>
+</html>
